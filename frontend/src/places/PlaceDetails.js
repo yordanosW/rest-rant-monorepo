@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router"
 import CommentCard from './CommentCard'
 import NewCommentForm from "./NewCommentForm";
+import { CurrentUser } from "../contexts/CurrentUser";
 
 function PlaceDetails() {
 
@@ -49,7 +50,9 @@ function PlaceDetails() {
 
 	async function createComment(commentAttributes) {
 		const response = await fetch(`http://localhost:5000/places/${place.placeId}/comments`, {
+			credentials: 'include',
 			method: 'POST',
+			credentials:'include',
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -100,8 +103,16 @@ function PlaceDetails() {
 			)
 		})
 	}
-
-
+let placeAction = null
+if (CurrentUser?.role === "admin") {
+	placeAction = (
+		<>
+		<a className="btn btn-warning onClick={editPlace}">
+			Edit
+		</a>
+		<button type="submit" className="btn btn-danger" onClick={deletePlace}>	Delete </button>
+		</>
+	)}
 	return (
 		<main>
 			<div className="row">
@@ -118,6 +129,7 @@ function PlaceDetails() {
 					</h2>
 					{rating}
 					<br />
+					{placeAction}
 					<h2>
 						Description
 					</h2>
